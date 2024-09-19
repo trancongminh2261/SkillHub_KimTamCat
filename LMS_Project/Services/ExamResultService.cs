@@ -20,7 +20,10 @@ namespace LMS_Project.Services
     {
         public class ExamSubmit
         {
-            [Required(ErrorMessage = "Vui lòng nhập đề thi")]
+            /// <summary>
+            /// kỳ thi
+            /// </summary>
+            public int? ExamPeriodId { get; set; }
             public int? ExamId { get; set; }
             [Required(ErrorMessage = "Vui lòng chọn bài học")]
             public int? LessonVideoId { get; set; }
@@ -59,6 +62,15 @@ namespace LMS_Project.Services
                 {
                     try
                     {
+                        //khai báo ở ngoài if này là vì còn dùng lại ở tít dưới => đừng sửa code chỗ này =)))
+                        var examPeriod = new tbl_ExamPeriod();
+                        if (model.ExamPeriodId != null && model.ExamPeriodId != 0)
+                        {
+                            examPeriod = await db.tbl_ExamPeriod.SingleOrDefaultAsync(x => x.Id == model.ExamPeriodId);
+                            if (examPeriod == null)
+                                throw new Exception("Không tìm thấy kỳ thi");
+                            model.ExamId = examPeriod.ExamId;
+                        }
                         var exam = await db.tbl_Exam.SingleOrDefaultAsync(x => x.Id == model.ExamId);
                         if (exam == null)
                             throw new Exception("Không tìm thấy đề");
@@ -69,6 +81,7 @@ namespace LMS_Project.Services
                         int status = exam.Type == 1 ? 2 : 1;
                         var examResult = new tbl_ExamResult
                         {
+                            ExamPeriodId = model.ExamPeriodId,
                             CreatedBy = user.FullName,
                             CreatedOn = DateTime.Now,
                             Type = exam.Type.Value,
@@ -407,6 +420,16 @@ namespace LMS_Project.Services
                         {
                             examResult.IsPass = true;
                             await LessonVideoService.Completed(db, examResult.LessonVideoId, user, examResult.Id, examResult.TotalPoint);
+                            //nếu submit cho kì thi => pass thì reset certificate
+                            if (model.ExamPeriodId != null && model.ExamPeriodId != 0)
+                            {
+                                var checkCertificate = await db.tbl_Certificate.SingleOrDefaultAsync(x => x.Enable == true && x.UserId == user.UserInformationId && x.VideoCourseId == examPeriod.VideoCourseId);
+                                if(checkCertificate == null)
+                                {
+                                    //Cấp chứng chỉ
+                                    await CertificateService.CreateCertificate(db, videoCourseId, user.UserInformationId);
+                                }
+                            }
                         }
                         await db.SaveChangesAsync();
                         tran.Commit();
@@ -427,6 +450,7 @@ namespace LMS_Project.Services
                 if (search == null) return new AppDomainResult { TotalRow = 0, Data = null };
                 string sql = $"Get_ExamResult @PageIndex = {search.PageIndex}," +
                     $"@PageSize = {search.PageSize}," +
+                    $"@ExamPeriodId = {search.ExamPeriodId ?? 0}," +
                     $"@ExamId = {search.ExamId ?? 0}," +
                     $"@VideoCourseId = {search.VideoCourseId}," +
                     $"@Status = {search.Status}," +

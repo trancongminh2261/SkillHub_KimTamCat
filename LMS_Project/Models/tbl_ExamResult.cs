@@ -9,6 +9,10 @@
 
     public class tbl_ExamResult : DomainEntity
     {
+        /// <summary>
+        /// nếu bài kiểm tra này làm khi tham gia kì thì thì lưu thông tin Id này
+        /// </summary>
+        public int? ExamPeriodId { get; set; }
         public int? ExamId { get; set; }
         [NotMapped]
         public string ExamName { get; set; }
@@ -59,6 +63,7 @@
     }
     public class Get_ExamResult : DomainEntity
     {
+        public int? ExamPeriodId { get; set; }
         public int? ExamId { get; set; }
         public string ExamName { get; set; }
         public int? StudentId { get; set; }

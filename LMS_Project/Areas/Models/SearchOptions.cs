@@ -35,7 +35,8 @@ namespace LMS_Project.Areas.Models
         public int VideoCourseId { get; set; } = 0;
     }
     public class ExamResultSearch : SearchOptions
-    { 
+    {
+        public int? ExamPeriodId { get; set; }
         public int? ExamId { get; set; }
         public int StudentId { get; set; } = 0;
         public int VideoCourseId { get; set; } = 0;
@@ -267,6 +268,12 @@ namespace LMS_Project.Areas.Models
         public int VideoCourseId { get; set; }
 
     }
+    public class UserInExamPeriodSearch : SearchOptions
+    {
+        [Required(ErrorMessage = "Vui lòng chọn kỳ thi")]
+        public int ExamPeriodId { get; set; }
+    }
+    
     public class SearchOptions
     {
         public int PageSize { get; set; } = 20;

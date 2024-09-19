@@ -158,6 +158,7 @@ namespace LMS_Project.Services
                         throw new Exception("Không tìm thấy mẫu chứng chỉ");
 
                     entity.Tags = model.Tags ?? entity.Tags;
+                    entity.ExtensionPeriod = model.ExtensionPeriod ?? entity.ExtensionPeriod;
                     entity.Name = model.Name ?? entity.Name;
                     entity.Thumbnail = model.Thumbnail ?? entity.Thumbnail;
                     entity.Description = model.Description ?? entity.Description;
@@ -299,7 +300,8 @@ namespace LMS_Project.Services
                                       TagModels = Task.Run(() => GetTag(i.Tags)).Result,
                                       Disable = false,
                                       CertificateConfigId = i.CertificateConfigId,
-                                      CertificateConfigName = i.CertificateConfigName
+                                      CertificateConfigName = i.CertificateConfigName,
+                                      ExtensionPeriod = i.ExtensionPeriod,
                                   }).ToList();
 
 
@@ -337,7 +339,8 @@ namespace LMS_Project.Services
                                       : v.HasValue ? false : true,
                                       CertificateConfigId = i.CertificateConfigId,
                                       CertificateConfigName = i.CertificateConfigName,
-                                      CompletedPercent = i.CompletedPercent
+                                      CompletedPercent = i.CompletedPercent,
+                                      ExtensionPeriod = i.ExtensionPeriod,
                                   }).ToList();
 
 
@@ -396,7 +399,8 @@ namespace LMS_Project.Services
                                       TagModels = Task.Run(() => GetTag(i.Tags)).Result,
                                       Disable = false,
                                       CertificateConfigId = i.CertificateConfigId,
-                                      CertificateConfigName = i.CertificateConfigName
+                                      CertificateConfigName = i.CertificateConfigName,
+                                      ExtensionPeriod = i.ExtensionPeriod
                                   }).ToList();
                     return new AppDomainResult { TotalRow = totalRow, Data = result };
                 }
@@ -431,16 +435,15 @@ namespace LMS_Project.Services
                                       Disable = false,
                                       CertificateConfigId = i.CertificateConfigId,
                                       CertificateConfigName = i.CertificateConfigName,
-                                      CompletedPercent = i.CompletedPercent
+                                      CompletedPercent = i.CompletedPercent,
+                                      ExtensionPeriod = i.ExtensionPeriod
                                   }).ToList();
 
 
                     return new AppDomainResult { TotalRow = totalRow, Data = result };
                 }
             }
-        }
-
-        
+        }  
 
         public static async Task<VideoCourseStatusDTO> GetStatus(VideoCourseSearchV2 baseSearch, tbl_UserInformation user)
         {
