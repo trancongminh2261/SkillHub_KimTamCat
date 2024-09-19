@@ -19,6 +19,16 @@
         /// Mặt sau
         /// </summary>
         public string Backside { get; set; }
+        /// <summary>
+        /// ngày hết hạn
+        /// </summary>
+        public DateTime? ExpirationDate { get; set; }
+        /// <summary>
+        /// Valid - còn hạn
+        /// Expired - hết hạn
+        /// Indefinitely - vô thời hạn
+        /// </summary>
+        public string Status { get; set; }
         [NotMapped]
         public string VideoCourseName { get; set; }
         [NotMapped]
@@ -57,6 +67,14 @@
         public string Mobile { get; set; }
         public string Email { get; set; }
         public string Avatar { get; set; }
+        /// <summary>
+        /// ngày hết hạn
+        /// </summary>
+        public DateTime? ExpirationDate { get; set; }
+        /// <summary>
+        /// nếu hôm nay lớn hơn ngày hết hạn thì trạng thái hết hạn ngược lại thì còn hạn
+        /// </summary>
+        public string Status { get; set; }
         public int TotalRow { get; set; }
     }
 }

@@ -25,8 +25,7 @@ namespace LMS_Project.Areas.ControllerAPIs
 {
     [ClaimsAuthorize]
     public class UserInformationController : BaseController
-    {
-        
+    { 
         //[HttpPost]
         //[Route("api/UserInformation/Upload")]
         //[ClaimsAuthorize(new lmsEnum.RoleEnum[] { 

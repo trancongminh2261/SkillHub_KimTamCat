@@ -1,5 +1,6 @@
 ﻿using LMS_Project.Areas.Models;
 using LMS_Project.Areas.Request;
+using LMS_Project.Enum;
 using LMS_Project.LMS;
 using LMS_Project.Models;
 using Newtonsoft.Json;
@@ -131,10 +132,27 @@ namespace LMS_Project.Services
 
                     var student = await dbContext.tbl_UserInformation.SingleOrDefaultAsync(x => x.UserInformationId == studentId);
                     var model = await dbContext.tbl_Certificate.FirstOrDefaultAsync(x => x.UserId == studentId && x.VideoCourseId == videoCourseId && x.Enable == true);
-                    if (model == null)
+
+                    //thời hạn chứng chỉ
+                    DateTime? expirationDate = DateTime.Now;
+                    var status = "";
+                    if (videoCoure.ExtensionPeriod != null && videoCoure.ExtensionPeriod != 0)
                     {
+                        expirationDate = expirationDate.Value.AddMonths(videoCoure.ExtensionPeriod ?? 0);
+                        status = CertificateEnum.Status.Valid.ToString(); 
+                    }
+                    else
+                    {
+                        expirationDate = null;
+                        status = CertificateEnum.Status.Indefinitely.ToString();
+                    }
+
+                    if (model == null)
+                    {                      
                         model = new tbl_Certificate
                         {
+                            ExpirationDate = expirationDate,
+                            Status = status,                          
                             Content = CertificateConfigService.ReplaceContent(config.Content, videoCoure.Name, student),
                             CreatedBy = student.FullName,
                             CreatedOn = DateTime.Now,
@@ -181,6 +199,8 @@ namespace LMS_Project.Services
                     {
                         model.Content = CertificateConfigService.ReplaceContent(config.Content, videoCoure.Name, student);
                         model.Background = config.Background;
+                        model.ExpirationDate = expirationDate;
+                        model.Status = status;
                         await dbContext.SaveChangesAsync();
                     }
 
@@ -249,6 +269,30 @@ namespace LMS_Project.Services
             await dbContext.SaveChangesAsync();
             return entity;
         }
+        //tự động cập nhật trạng thái chứng chỉ khi hết hạn
+        public static async Task AutoUpdateStatus()
+        {
+            using (var db = new lmsDbContext())
+            {
+                var timenow = DateTime.Now;
 
+                //cập nhật lớp kết thúc
+                var listCertificateExpired = await db.tbl_Certificate
+                    .Where(x => x.Enable == true 
+                        && x.Status != CertificateEnum.Status.Indefinitely.ToString() 
+                        && x.Status != CertificateEnum.Status.Valid.ToString() 
+                        && x.ExpirationDate != null
+                        && DbFunctions.TruncateTime(timenow) > DbFunctions.TruncateTime(x.ExpirationDate) )
+                    .ToListAsync();
+                if (listCertificateExpired.Count > 0)
+                {
+                    foreach (var item in listCertificateExpired)
+                    {
+                        item.Status = CertificateEnum.Status.Expired.ToString();
+                    }
+                }
+                await db.SaveChangesAsync();
+            }
+        }
     }
 }

@@ -20,6 +20,66 @@ namespace LMS_Project.Areas.Request
         public DateTime CreatedOn { get; set; } = DateTime.Now;
         [JsonIgnore]
         public DateTime ModifiedOn { get; set; } = DateTime.Now;
+    }    
+    public class UserInExamPeriodCreate : BaseCreate
+    {
+        [Required(ErrorMessage = "Vui lòng chọn kỳ thi")]
+        public int ExamPeriodId { get; set; }
+        public List<int> ListUserId { get; set; }      
+    }
+    public class ExamPeriodCreate : BaseCreate
+    {
+        /// <summary>
+        /// mã kỳ thi
+        /// </summary>
+        [Required(ErrorMessage ="Vui lòng nhập mã kỳ thi")]
+        public string Code { get; set; }
+        /// <summary>
+        /// tên kỳ thi
+        /// </summary>
+        [Required(ErrorMessage = "Vui lòng nhập tên kỳ thi")]
+        public string Name { get; set; }
+        /// <summary>
+        /// thời gian bắt đầu
+        /// </summary>
+        [Required(ErrorMessage = "Vui lòng chọn thời gian bắt đầu")]
+        public DateTime StartTime { get; set; }
+        /// <summary>
+        /// thời gian kết thúc
+        /// </summary>
+        [Required(ErrorMessage = "Vui lòng chọn thời gian kết thúc")]
+        public DateTime EndTime { get; set; }
+        /// <summary>
+        /// chương trình học
+        /// </summary>
+        [Required(ErrorMessage = "Vui lòng chọn chương trình")]
+        public int VideoCourseId { get; set; }
+        /// <summary>
+        /// đề kiểm tra
+        /// </summary>
+        [Required(ErrorMessage = "Vui lòng chọn đề thi")]
+        public int ExamId { get; set; }
+        /// <summary>
+        /// thời gian gia hạn (bao nhiêu tháng)
+        /// </summary>
+        [Required(ErrorMessage = "Vui lòng chọn thời gian gia hạn")]
+        public int ExtensionPeriod { get; set; }
+        /// <summary>
+        /// điểm sàn ( mức điểm cần đạt được để vượt qua kỳ thi )
+        /// </summary>
+        /*[Required(ErrorMessage = "Vui lòng nhập điểm sàn")]
+        public double PassingScore { get; set; }*/
+        /// <summary>
+        /// mô tả 
+        /// </summary>
+        public string Description { get; set; }
+        [JsonIgnore]
+        public string Status { get; set; } = ExamPeriodEnum.Status.UpComing.ToString();
+        /// <summary>
+        /// số lượng người tham gia tối đa
+        /// </summary>
+        [Required(ErrorMessage = "Vui lòng nhập số lượng tham gia")]
+        public int MaxQuantity { get; set; }
     }
     public class VideoCourseAllowCreate : BaseCreate
     {
@@ -486,6 +546,10 @@ namespace LMS_Project.Areas.Request
         /// cho phép tất cả mọi người tham gia hay không
         /// </summary>
         public bool? IsPublic { get; set; } = true;
+        /// <summary>
+        /// thời hạn chứng chỉ
+        /// </summary>
+        public int? ExtensionPeriod { get; set; }
     }
     public class RegisterModel : BaseCreate
     {

@@ -7,13 +7,13 @@ namespace LMS_Project.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class bigUpdate : IMigrationMetadata
+    public sealed partial class updateUserInExamPeriod : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(bigUpdate));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(updateUserInExamPeriod));
         
         string IMigrationMetadata.Id
         {
-            get { return "202408131104409_bigUpdate"; }
+            get { return "202409180243170_updateUserInExamPeriod"; }
         }
         
         string IMigrationMetadata.Source

@@ -21,6 +21,10 @@
         /// cho phép tất cả mọi người tham gia hay không
         /// </summary>
         public bool? IsPublic { get; set; }
+        /// <summary>
+        /// thời hạn của chứng chỉ => ví dụ nhân được chứng chỉ 15/9 thời hạn 2 tháng thì 15/11 là hết hạn
+        /// </summary>
+        public int? ExtensionPeriod { get; set; }
         [NotMapped]
         public string CertificateConfigName { get; set; }
         [NotMapped]
@@ -56,6 +60,7 @@
         public bool? Active { get; set; }
         public int BeforeCourseId { get; set; }
         public string BeforeCourseName { get; set; }
+        public int? ExtensionPeriod { get; set; }
         /// <summary>
         /// Chứng chỉ mẫu
         /// </summary>
@@ -87,6 +92,7 @@
         /// </summary>
         public int? CertificateConfigId { get; set; }
         public string CertificateConfigName { get; set; }
+        public int? ExtensionPeriod { get; set; }
         /// <summary>
         /// cho phép tất cả mọi người tham gia hay không
         /// </summary>

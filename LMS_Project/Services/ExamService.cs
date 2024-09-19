@@ -25,6 +25,7 @@ namespace LMS_Project.Services
                 return data;
             }
         }
+       
         public static async Task<tbl_Exam> Insert(ExamCreate examCreate,tbl_UserInformation user)
         {
             using (var db = new lmsDbContext())
@@ -293,6 +294,7 @@ namespace LMS_Project.Services
                 return new AppDomainResult { Data = result };
             }
         }
+        
         public static async Task<double> GetTotalPoint(int examId)
         {
             using (var db = new lmsDbContext())
@@ -320,6 +322,7 @@ namespace LMS_Project.Services
                 return totalPoint;
             }
         }
+        
         public class AddExerciseGroupModel
         {
             [Required(ErrorMessage = "Vui lòng chọn phần")]

@@ -118,7 +118,8 @@ namespace LMS_Project.Areas.ControllerAPIs
             double totalPoint = await ExamService.GetTotalPoint(examId);
             var exam = await ExamService.GetById(examId);
             return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data = data.Data, totalPoint, time = exam.Time });
-        }
+        }      
+
         [HttpPost]
         [Route("api/Exam/AddExerciseGroup")]
         public async Task<HttpResponseMessage> AddExerciseGroup(AddExerciseGroupModel model)
