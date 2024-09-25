@@ -48,9 +48,9 @@ namespace LMS_Project.Areas.ControllerAPIs
         }
         [HttpGet]
         [Route("api/ExamResult")]
-        public async Task<HttpResponseMessage> GetAll([FromUri] ExamResultSearch search)
+        public async Task<HttpResponseMessage> GetAll([FromUri] ExamResultSearch baseSearch)
         {
-            var data = await ExamResultService.GetAll(search,GetCurrentUser());
+            var data = await ExamResultService.GetAll(baseSearch, GetCurrentUser());
             if (data.TotalRow == 0)
                 return Request.CreateResponse(HttpStatusCode.NoContent);
             return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", totalRow = data.TotalRow, data = data.Data });

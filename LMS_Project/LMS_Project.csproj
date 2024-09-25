@@ -376,6 +376,7 @@
     <Compile Include="Areas\ControllerAPIs\ExamResultController.cs" />
     <Compile Include="Areas\ControllerAPIs\ExamSectionController.cs" />
     <Compile Include="Areas\ControllerAPIs\ExerciseGroupController.cs" />
+    <Compile Include="Areas\ControllerAPIs\Header\HeaderController.cs" />
     <Compile Include="Areas\ControllerAPIs\LessonVideoController.cs" />
     <Compile Include="Areas\ControllerAPIs\NotificationController.cs" />
     <Compile Include="Areas\ControllerAPIs\NotificationInVideoController.cs" />
@@ -385,6 +386,7 @@
     <Compile Include="Areas\ControllerAPIs\SeminarController.cs" />
     <Compile Include="Areas\ControllerAPIs\SeminarRecordController.cs" />
     <Compile Include="Areas\ControllerAPIs\DocumentController.cs" />
+    <Compile Include="Areas\ControllerAPIs\Statistical\StatisticalController.cs" />
     <Compile Include="Areas\ControllerAPIs\StudyRouteController.cs" />
     <Compile Include="Areas\ControllerAPIs\StudyRouteDetailController.cs" />
     <Compile Include="Areas\ControllerAPIs\TopicController.cs" />
@@ -411,6 +413,7 @@
     <Compile Include="DTO\Domain\DomainDTO.cs" />
     <Compile Include="DTO\Domain\DomainOptionDTO.cs" />
     <Compile Include="DTO\ExamPeriod\ExamPeriodDTO.cs" />
+    <Compile Include="DTO\Header\MenuCountDTO.cs" />
     <Compile Include="DTO\OptionDTO\VideoCourseAllowAvailableDTO.cs" />
     <Compile Include="DTO\ServerDownload\ConvertUploadVideoDTO.cs" />
     <Compile Include="DTO\ServerDownload\ResponseGetIframeDTO.cs" />
@@ -456,6 +459,10 @@
     <Compile Include="Migrations\202409181618197_updateVideoCourse.cs" />
     <Compile Include="Migrations\202409181618197_updateVideoCourse.Designer.cs">
       <DependentUpon>202409181618197_updateVideoCourse.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202409250235106_updateExamPeriod2.cs" />
+    <Compile Include="Migrations\202409250235106_updateExamPeriod2.Designer.cs">
+      <DependentUpon>202409250235106_updateExamPeriod2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DomainEntity.cs" />
@@ -520,6 +527,7 @@
     <Compile Include="Services\ExamSectionService.cs" />
     <Compile Include="Services\ExerciseGroupService.cs" />
     <Compile Include="Services\FileInVideoService.cs" />
+    <Compile Include="Services\Header\HearderService.cs" />
     <Compile Include="Services\LessonVideoService.cs" />
     <Compile Include="Services\NotificationInVideoService.cs" />
     <Compile Include="Services\NotificationService.cs" />
@@ -530,6 +538,7 @@
     <Compile Include="Services\SeminarRecordService.cs" />
     <Compile Include="Services\SeminarService.cs" />
     <Compile Include="Services\DocumentService.cs" />
+    <Compile Include="Services\Statistical\StatisticalService.cs" />
     <Compile Include="Services\StudyRouteDetailService.cs" />
     <Compile Include="Services\StudyRouteService.cs" />
     <Compile Include="Services\TopicService.cs" />
@@ -572,6 +581,7 @@
   <ItemGroup>
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
+    <Content Include="Views\Template\MailNewExamPeriod.html" />
     <Content Include="Views\Template\MailNotiStudy.html" />
     <Content Include="Views\Template\MailNewLesson.html" />
     <Content Include="Web.config">
@@ -643,6 +653,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202409181618197_updateVideoCourse.resx">
       <DependentUpon>202409181618197_updateVideoCourse.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202409250235106_updateExamPeriod2.resx">
+      <DependentUpon>202409250235106_updateExamPeriod2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

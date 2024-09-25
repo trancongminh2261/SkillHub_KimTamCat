@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static LMS_Project.Models.lmsEnum;
+using static LMS_Project.Services.DashboardService;
 
 namespace LMS_Project.Services.ExamPeriod
 {
@@ -88,11 +89,15 @@ namespace LMS_Project.Services.ExamPeriod
             data.ModifiedOn = DateTime.Now;
             await dbContext.SaveChangesAsync();
         }
-        public async Task<AppDomainResult<ExamPeriodDTO>> GetAll(SearchOptions baseSearch)
+        public async Task<AppDomainResult<ExamPeriodDTO>> GetAll(SearchOptions baseSearch, tbl_UserInformation currentUser)
         {
             if (baseSearch == null) return new AppDomainResult<ExamPeriodDTO> { TotalRow = 0, Data = null };
+            //nếu không phải học viên thì set userId = 0 để lấy full kỳ thi
+            if (currentUser.RoleId != (int)RoleEnum.student)
+                currentUser.UserInformationId = 0;
             string sql = $"Get_ExamPeriod @PageIndex = {baseSearch.PageIndex}," +
                 $"@PageSize = {baseSearch.PageSize}," +
+                $"@UserId = {currentUser.UserInformationId}," +
                 $"@Search = N'{baseSearch.Search ?? ""}'";
             var data = await dbContext.Database.SqlQuery<ExamPeriodDTO>(sql).ToListAsync();
             if (!data.Any()) return new AppDomainResult<ExamPeriodDTO> { TotalRow = 0, Data = null };
@@ -100,42 +105,27 @@ namespace LMS_Project.Services.ExamPeriod
             return new AppDomainResult<ExamPeriodDTO> { TotalRow = totalRow ?? 0, Data = data };
         }
 
-        public async Task<AppDomainResult<ExamPeriodStatistical>> GetStatistical(SearchOptions baseSearch)
+
+        public Time GetTimeModel(int? month, int? year)
         {
-            var listExamPeriod = await dbContext.tbl_ExamPeriod.Where(x => x.Enable == true).OrderByDescending(x => x.Id).ToListAsync() ?? new List<tbl_ExamPeriod>();
-            var totalRow = listExamPeriod.Count;
-            listExamPeriod = listExamPeriod.Skip((baseSearch.PageIndex - 1) * baseSearch.PageSize).Take(baseSearch.PageSize).ToList();
-            var listExamResult = await dbContext.tbl_ExamResult.Where(x => x.Enable == true && x.ExamPeriodId != null).ToListAsync() ?? new List<tbl_ExamResult>();
-            var listUserInExamPeriod = await dbContext.tbl_UserInExamPeriod.Where(x => x.Enable == true).ToListAsync() ?? new List<tbl_UserInExamPeriod>();
-            var result = new List<ExamPeriodStatistical>();
-            if (listExamPeriod.Count > 0)
-            {               
-                foreach(var item in listExamPeriod)
-                {
-                    var data = new ExamPeriodStatistical();
-                    data.Code = item.Code;
-                    data.Name = item.Name;
-                    data.StartTime = item.StartTime;
-                    data.EndTime = item.EndTime;
-                    data.TotalJoined = listUserInExamPeriod.Count(x => x.ExamPeriodId == item.ExtensionPeriod);
-                    data.TotalSubmit = listExamResult.Count(x => x.ExamPeriodId == item.ExtensionPeriod);
-                    data.TotalNotSubmit = data.TotalSubmit - data.TotalJoined;
-                    data.TotalPass = listExamResult.Count(x => x.ExamPeriodId == item.ExtensionPeriod && x.IsPass == true);
-                    data.TotalFail = data.TotalJoined - data.TotalSubmit;
-                    data.RatePass = 0;
-                    if (data.TotalJoined > 0)
-                        data.RatePass = Math.Round(((double)data.TotalPass / (double)data.TotalJoined * 100), 2);
-                    data.RateFail = 100 - data.RatePass;
-                    result.Add(data);
-                }
-            }
-            return new AppDomainResult<ExamPeriodStatistical> { TotalRow = totalRow, Data = result };
+            DateTime timeNow = DateTime.Now;
+            Time time = new Time();
+            time.Month = month ?? DateTime.Now.Month;
+            time.Year = year ?? DateTime.Now.Year;
+            time.LastMonth = time.Month - 1 == 0 ? 12 : time.Month - 1;
+            time.YearOfLastMonth = time.LastMonth == 12 ? time.Year - 1 : time.Year;
+            time.LastYear = time.Year - 1;
+            time.Day = timeNow.Day;
+            return time;
         }
+       
         public async Task<AppDomainResult> GetDoingTest(int examPeriodId, bool isDoingTest, tbl_UserInformation user)
         {
             var examPeriod = await dbContext.tbl_ExamPeriod.SingleOrDefaultAsync(x => x.Enable == true && x.Id == examPeriodId);
             if (examPeriod == null)
                 throw new Exception("Không tìm thấy thông tin kỳ thi");
+            if(DateTime.Now >= examPeriod.EndTime)
+                throw new Exception("Kỳ thi đã kết thúc");
             string sql = $"Get_ExamDetail @PageIndex = 1," +
                 $"@PageSize = 9999," +
                 $"@ExamId = {examPeriod.ExamId}";

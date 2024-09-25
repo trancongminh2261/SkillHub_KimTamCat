@@ -27,7 +27,7 @@ namespace LMS_Project.DTO.ExamPeriod
         /// <summary>
         /// id chương trình học
         /// </summary>
-        public int VideoCourseId { get; set; }
+        public int? VideoCourseId { get; set; }
         /// <summary>
         /// tên chương trình học
         /// </summary>
@@ -51,7 +51,7 @@ namespace LMS_Project.DTO.ExamPeriod
         /// <summary>
         /// thời gian gia hạn (bao nhiêu tháng)
         /// </summary>
-        public int ExtensionPeriod { get; set; }   
+        public int? ExtensionPeriod { get; set; }   
         /// <summary>
         /// mô tả 
         /// </summary>
@@ -65,7 +65,11 @@ namespace LMS_Project.DTO.ExamPeriod
         /// <summary>
         /// số lượng tối đa
         /// </summary>
-        public int MaxQuantity { get; set; }
+        public int? MaxQuantity { get; set; }
+        /// <summary>
+        /// trạng thái đã làm hay chưa
+        /// </summary>
+        public bool? IsDone { get; set; }
         public ExamPeriodDTO() : base() { }
         public ExamPeriodDTO(object model) : base(model) { }
     }

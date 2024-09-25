@@ -267,16 +267,16 @@ namespace LMS_Project.Services
                         string onesignalContent = $"Bạn có bài học mới trong khóa {videoCourse.Name}";
                         string contentEmail = System.IO.File.ReadAllText($"{pathViews}/Template/MailNewLesson.html");
 
-                        contentEmail = contentEmail.Replace("[TenDuAn]", projectName);
-                        contentEmail = contentEmail.Replace("[KhoaHoc]", videoCourse.Name);
-                        contentEmail = contentEmail.Replace("[Chuong]", section.Name);
-                        contentEmail = contentEmail.Replace("[BaiHoc]", newLesson.Name);
-                        contentEmail = contentEmail.Replace("[TaiDay]", href);
+                        contentEmail = contentEmail.Replace("[ProjectName]", projectName);
+                        contentEmail = contentEmail.Replace("[VideoCourseName]", videoCourse.Name);
+                        contentEmail = contentEmail.Replace("[SectionName]", section.Name);
+                        contentEmail = contentEmail.Replace("[LessonName]", newLesson.Name);
+                        contentEmail = contentEmail.Replace("[Url]", $"{domain}/learning/?course={videoCourse.Id}&sectionIds={section.Id}&currentLessonId={newLesson.Id}");
                         foreach (var studentId in studentIds)
                         {
                             var student = db.tbl_UserInformation.SingleOrDefault(x => x.UserInformationId == studentId); 
                             string mailToStudent = contentEmail;
-                            mailToStudent = mailToStudent.Replace("[HoVaTen]",student.FullName);
+                            mailToStudent = mailToStudent.Replace("[FullName]",student.FullName);
                             NotificationService.SendNotThread(db,
                                 new NotificationService.SendNotThreadModel
                                 { 

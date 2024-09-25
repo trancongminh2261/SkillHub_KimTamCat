@@ -1,7 +1,9 @@
 ﻿using LMS_Project.Areas.Models;
+using LMS_Project.DTO.ExamPeriod;
 using LMS_Project.Models;
 using LMS_Project.Services;
 using LMS_Project.Users;
+using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,12 +12,110 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using static LMS_Project.Models.lmsEnum;
+using static LMS_Project.Services.DashboardService;
 
 namespace LMS_Project.Areas.ControllerAPIs
 {
     [ClaimsAuthorize]
     public class DashboardController : BaseController
     {
+        private lmsDbContext dbContext;
+        private DashboardService domainService;
+        public DashboardController()
+        {
+            this.dbContext = new lmsDbContext();
+            this.domainService = new DashboardService(this.dbContext);
+        }
+
+        /// <summary>
+        /// thống kê số liệu tổng quan
+        /// </summary>
+        /// <param name="baseSeach"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Dashboard/statistical-overview")]
+        [SwaggerResponse(200, "OK", typeof(IList<StatisticalModel>))]
+        public async Task<HttpResponseMessage> Overview([FromUri] StatisticalSearch baseSeach)
+        {
+            var data = await domainService.Overview(baseSeach, GetCurrentUser());
+            if (data == null || data.Count <= 0)
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data = data });
+        }
+
+        /// <summary>
+        /// thống kê tiến trình hội thảo
+        /// </summary>
+        /// <param name="baseSearch"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Dashboard/webinar-progress")]
+        [SwaggerResponse(200, "OK", typeof(IList<StatisticalModel>))]
+        public async Task<HttpResponseMessage> WebinarProgress([FromUri] StatisticalSearch baseSearch)
+        {
+            var data = await domainService.WebinarProgress(baseSearch, GetCurrentUser());
+            if (data == null || data.Count <= 0)
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data = data });
+        }
+
+        /// <summary>
+        /// xếp hạng dựa trên thành tích học tập
+        /// </summary>
+        /// <param name="baseSearch"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Dashboard/academic-rank")]
+        [SwaggerResponse(200, "OK", typeof(AppDomainResult<AcademicRankModel>))]
+        public async Task<HttpResponseMessage> AcademicRank([FromUri] StatisticalSearch baseSearch)
+        {
+            var data = await domainService.AcademicRank(baseSearch, GetCurrentUser());
+            if (data.TotalRow == 0)
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", totalRow = data.TotalRow, data = data.Data });
+        }
+
+        /// <summary>
+        /// tỷ lệ vượt qua bài kiểm tra
+        /// </summary>
+        /// <param name="baseSearch"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Dashboard/rate-pass-exam")]
+        [SwaggerResponse(200, "OK", typeof(AppDomainResult<AcademicRankModel>))]
+        public async Task<HttpResponseMessage> RatePassExam([FromUri] StatisticalSearch baseSearch)
+        {
+            var data = await domainService.RatePassExam(baseSearch, GetCurrentUser());
+            if (data.TotalRow == 0)
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", totalRow = data.TotalRow, data = data.Data });
+        }
+
+        /// <summary>
+        /// thời gian học của học viên
+        /// </summary>
+        /// <param name="baseSearch"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("api/Dashboard/study-time")]
+        [SwaggerResponse(200, "OK", typeof(AppDomainResult<AcademicRankModel>))]
+        public async Task<HttpResponseMessage> StudyTime([FromUri] StatisticalSearch baseSearch)
+        {
+            var data = await domainService.StudyTime(baseSearch, GetCurrentUser());
+            if (data.TotalRow == 0)
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", totalRow = data.TotalRow, data = data.Data });
+        }
+        [HttpGet]
+        [Route("api/Dashboard/statistical-exam-period")]
+        [SwaggerResponse(200, "OK", typeof(AppDomainResult<ExamPeriodDTO>))]
+        public async Task<HttpResponseMessage> StatisticalExamPeriod([FromUri] StatisticalSearch baseSearch)
+        {
+            var data = await domainService.StatisticalExamPeriod(baseSearch, GetCurrentUser());
+            if (data.TotalRow == 0)
+                return Request.CreateResponse(HttpStatusCode.NoContent);
+            return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", totalRow = data.TotalRow, data = data.Data });
+        }
         #region V2
         /*[HttpGet]
         [Route("api/Dashboard/OverviewV2")]

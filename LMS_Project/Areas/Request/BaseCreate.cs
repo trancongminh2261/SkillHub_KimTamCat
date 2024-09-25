@@ -52,8 +52,7 @@ namespace LMS_Project.Areas.Request
         /// <summary>
         /// chương trình học
         /// </summary>
-        [Required(ErrorMessage = "Vui lòng chọn chương trình")]
-        public int VideoCourseId { get; set; }
+        public int? VideoCourseId { get; set; }
         /// <summary>
         /// đề kiểm tra
         /// </summary>
@@ -62,8 +61,7 @@ namespace LMS_Project.Areas.Request
         /// <summary>
         /// thời gian gia hạn (bao nhiêu tháng)
         /// </summary>
-        [Required(ErrorMessage = "Vui lòng chọn thời gian gia hạn")]
-        public int ExtensionPeriod { get; set; }
+        public int? ExtensionPeriod { get; set; }
         /// <summary>
         /// điểm sàn ( mức điểm cần đạt được để vượt qua kỳ thi )
         /// </summary>
@@ -78,8 +76,7 @@ namespace LMS_Project.Areas.Request
         /// <summary>
         /// số lượng người tham gia tối đa
         /// </summary>
-        [Required(ErrorMessage = "Vui lòng nhập số lượng tham gia")]
-        public int MaxQuantity { get; set; }
+        public int? MaxQuantity { get; set; }
     }
     public class VideoCourseAllowCreate : BaseCreate
     {

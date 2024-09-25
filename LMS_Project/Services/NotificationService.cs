@@ -5,6 +5,7 @@ using LMS_Project.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
@@ -54,6 +55,7 @@ namespace LMS_Project.Services
         {
             try
             {
+                string projectName = ConfigurationManager.AppSettings["ProjectName"].ToString();
                 var model = new tbl_Notification
                 {
                     Content = itemModel.Content,
@@ -71,7 +73,7 @@ namespace LMS_Project.Services
                 if(IsSendMail == true)
                 {
                     ///Gửi mail
-                    AssetCRM.SendMail(itemModel.Email, model.Title, string.IsNullOrEmpty(itemModel.EmailContent) ? model.Content : itemModel.EmailContent);
+                    AssetCRM.SendMail(itemModel.Email, $"[{projectName}] - {model.Title}", string.IsNullOrEmpty(itemModel.EmailContent) ? model.Content : itemModel.EmailContent);
                 }
                 ///Thông báo desktop
                 //AssetCRM.OneSignalPushNotifications(itemModel.Title, itemModel.OnesignalContent, itemModel.OnesignalId, itemModel.OnesignalUrl);

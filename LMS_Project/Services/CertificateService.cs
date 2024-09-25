@@ -136,6 +136,7 @@ namespace LMS_Project.Services
                     //thời hạn chứng chỉ
                     DateTime? expirationDate = DateTime.Now;
                     var status = "";
+
                     if (videoCoure.ExtensionPeriod != null && videoCoure.ExtensionPeriod != 0)
                     {
                         expirationDate = expirationDate.Value.AddMonths(videoCoure.ExtensionPeriod ?? 0);
@@ -205,6 +206,112 @@ namespace LMS_Project.Services
                     }
 
                 }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static async Task CreateCertificateByExamPeriod(lmsDbContext dbContext, int examPeriodId, int studentId)
+        {
+            try
+            {
+                var examPeriod = await dbContext.tbl_ExamPeriod.SingleOrDefaultAsync(x => x.Enable == true && x.Id == examPeriodId);
+                if (examPeriod == null)
+                    throw new Exception("Không tìm thấy kỳ thi");
+                if(examPeriod.VideoCourseId != 0 && examPeriod.VideoCourseId != null)
+                {
+                    var videoCourseId = examPeriod.VideoCourseId;
+                    var entity = await dbContext.tbl_Certificate.AnyAsync(x => x.UserId == studentId && x.VideoCourseId == videoCourseId && x.Enable == true);
+                    if (!entity)
+                    {
+                        var videoCoure = await dbContext.tbl_VideoCourse.FirstOrDefaultAsync(x => x.Enable == true && x.Active == true && x.Id == videoCourseId);
+                        if (videoCoure == null)
+                            return;
+
+                        var config = await dbContext.tbl_CertificateConfig
+                            .SingleOrDefaultAsync(x => x.Id == videoCoure.CertificateConfigId);
+                        if (config == null)
+                            return;
+
+                        var student = await dbContext.tbl_UserInformation.SingleOrDefaultAsync(x => x.UserInformationId == studentId);
+                        var model = await dbContext.tbl_Certificate.FirstOrDefaultAsync(x => x.UserId == studentId && x.VideoCourseId == videoCourseId && x.Enable == true);
+
+                        //thời hạn chứng chỉ
+                        DateTime? expirationDate = DateTime.Now;
+                        var status = "";
+
+                        if (examPeriod.ExtensionPeriod != null && examPeriod.ExtensionPeriod != 0)
+                        {
+                            expirationDate = expirationDate.Value.AddMonths(examPeriod.ExtensionPeriod ?? 0);
+                            status = CertificateEnum.Status.Valid.ToString();
+                        }
+                        else
+                        {
+                            expirationDate = null;
+                            status = CertificateEnum.Status.Indefinitely.ToString();
+                        }
+
+                        if (model == null)
+                        {
+                            model = new tbl_Certificate
+                            {
+                                ExpirationDate = expirationDate,
+                                Status = status,
+                                Content = CertificateConfigService.ReplaceContent(config.Content, videoCoure.Name, student),
+                                CreatedBy = student.FullName,
+                                CreatedOn = DateTime.Now,
+                                Enable = true,
+                                ModifiedBy = student.FullName,
+                                ModifiedOn = DateTime.Now,
+                                UserId = student.UserInformationId,
+                                Background = config.Background,
+                                VideoCourseId = videoCoure.Id,
+                                Backside = config.Backside
+                            };
+                            dbContext.tbl_Certificate.Add(model);
+                            await dbContext.SaveChangesAsync();
+
+                            //Gửi mail đến người dùng, cần có FE css cho 1 màn hình thông báo mail
+                            var httpContext = HttpContext.Current;
+                            var path = Path.Combine(httpContext.Server.MapPath("~/Upload"));
+                            string strPathAndQuery = httpContext.Request.Url.PathAndQuery;
+                            string strUrl = httpContext.Request.Url.AbsoluteUri.Replace(strPathAndQuery, "/");
+                            var pathViews = Path.Combine(httpContext.Server.MapPath("~/Views"));
+
+                            string content = System.IO.File.ReadAllText($"{pathViews}/Home/ExportCertificate.cshtml");
+                            content = content.Replace("{background}", model.Background);
+                            content = content.Replace("{content}", model.Content);
+                            model = await ExportPDF(dbContext, model.Id, content, path, strUrl);
+
+                            string projectName = ConfigurationManager.AppSettings["ProjectName"].ToString();
+
+                            string contentSendMail = System.IO.File.ReadAllText($"{pathViews}/Home/SendMailCertificate.cshtml");
+                            contentSendMail = contentSendMail.Replace("{TenHocVien}", student.FullName);
+                            contentSendMail = contentSendMail.Replace("{TenChungChi}", videoCoure.Name);
+                            contentSendMail = contentSendMail.Replace("{TenToChuc}", projectName);
+                            contentSendMail = contentSendMail.Replace("{PDFUrl}", model.PDFUrl);
+                            contentSendMail = contentSendMail.Replace("{DomainAPI}", strUrl);
+
+                            Thread sendMail = new Thread(() =>
+                            {
+                                AssetCRM.SendMail(student.Email, $"Cấp chứng chỉ khóa học {videoCoure.Name}", contentSendMail);
+                                //AssetCRM.SendMailAttachment(student.Email, $"Cấp chứng chỉ khóa học {videoCoure.Name}", contentSendMail, model.PDFUrl);
+                            });
+                            sendMail.Start();
+                        }
+                        else
+                        {
+                            model.Content = CertificateConfigService.ReplaceContent(config.Content, videoCoure.Name, student);
+                            model.Background = config.Background;
+                            model.ExpirationDate = expirationDate;
+                            model.Status = status;
+                            await dbContext.SaveChangesAsync();
+                        }
+
+                    }
+                }            
             }
             catch (Exception e)
             {
