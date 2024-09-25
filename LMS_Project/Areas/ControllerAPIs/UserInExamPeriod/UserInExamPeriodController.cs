@@ -44,7 +44,7 @@ namespace LMS_Project.Areas.ControllerAPIs.UserInExamPeriod
         public async Task<HttpResponseMessage> Insert(UserInExamPeriodCreate model)
         {
             try
-            {
+            {                
                 var data = await domainService.Insert(model, GetCurrentUser());
                 return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data });
             }
@@ -74,15 +74,15 @@ namespace LMS_Project.Areas.ControllerAPIs.UserInExamPeriod
         public async Task<HttpResponseMessage> GetAll([FromUri] UserInExamPeriodSearch baseSearch)
         {
             var data = await domainService.GetAll(baseSearch);
-            return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data });
+            return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", totalRow = data.TotalRow, data = data.Data });
         }
 
         [HttpGet]
-        [Route("user-available/{examPeriodId}")]
-        [SwaggerResponse(200, "OK", typeof(AppDomainResult<UserInExamPeriodDTO>))]
-        public async Task<HttpResponseMessage> GetUserAvailable(int examPeriodId)
+        [Route("user-available")]
+        [SwaggerResponse(200, "OK", typeof(AppDomainResult<UserInExamPeriodAvailable>))]
+        public async Task<HttpResponseMessage> GetUserAvailable([FromUri]UserInExamPeriodAvailableSearch baseSearch)
         {
-            var data = await domainService.GetUserAvailable(examPeriodId);
+            var data = await domainService.GetUserAvailable(baseSearch);
             return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data });
         }
     }

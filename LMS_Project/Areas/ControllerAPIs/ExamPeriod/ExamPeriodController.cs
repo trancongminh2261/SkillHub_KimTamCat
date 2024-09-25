@@ -87,18 +87,7 @@ namespace LMS_Project.Areas.ControllerAPIs.ExamPeriod
         [SwaggerResponse(200, "OK", typeof(AppDomainResult<ExamPeriodDTO>))]
         public async Task<HttpResponseMessage> GetAll([FromUri] SearchOptions baseSearch)
         {
-            var data = await domainService.GetAll(baseSearch);
-            if (data.TotalRow == 0)
-                return Request.CreateResponse(HttpStatusCode.NoContent);
-            return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", totalRow = data.TotalRow, data = data.Data });
-        }
-
-        [HttpGet]
-        [Route("statistical")]
-        [SwaggerResponse(200, "OK", typeof(AppDomainResult<ExamPeriodDTO>))]
-        public async Task<HttpResponseMessage> GetStatistical([FromUri] SearchOptions baseSearch)
-        {
-            var data = await domainService.GetStatistical(baseSearch);
+            var data = await domainService.GetAll(baseSearch, GetCurrentUser());
             if (data.TotalRow == 0)
                 return Request.CreateResponse(HttpStatusCode.NoContent);
             return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", totalRow = data.TotalRow, data = data.Data });
@@ -106,13 +95,13 @@ namespace LMS_Project.Areas.ControllerAPIs.ExamPeriod
 
         [HttpGet]
         [Route("doing-test/{id}")]
-        public async Task<HttpResponseMessage> GetDoingTest(int examPeriodId)
+        public async Task<HttpResponseMessage> GetDoingTest(int id)
         {
-            var data = await domainService.GetDoingTest(examPeriodId, true, GetCurrentUser());
+            var data = await domainService.GetDoingTest(id, true, GetCurrentUser());
             if (data.Data == null)
                 return Request.CreateResponse(HttpStatusCode.NoContent);
-            double totalPoint = await domainService.GetTotalPoint(examPeriodId);
-            var exam = await domainService.GetExam(examPeriodId);
+            double totalPoint = await domainService.GetTotalPoint(id);
+            var exam = await domainService.GetExam(id);
             return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data = data.Data, totalPoint, time = exam.Time });
         }
     }

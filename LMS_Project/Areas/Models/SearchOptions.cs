@@ -38,6 +38,7 @@ namespace LMS_Project.Areas.Models
     {
         public int? ExamPeriodId { get; set; }
         public int? ExamId { get; set; }
+        public int? DepartmentId { get; set; }
         public int StudentId { get; set; } = 0;
         public int VideoCourseId { get; set; } = 0;
         /// <summary>
@@ -273,7 +274,17 @@ namespace LMS_Project.Areas.Models
         [Required(ErrorMessage = "Vui lòng chọn kỳ thi")]
         public int ExamPeriodId { get; set; }
     }
-    
+    public class UserInExamPeriodAvailableSearch
+    {
+        [Required(ErrorMessage = "Vui lòng chọn kỳ thi")]
+        public int ExamPeriodId { get; set; }
+        public int? DepartmentId { get; set; }
+    }
+    public class StatisticalSearch : SearchOptions
+    {
+        public int? Month { get; set; } = DateTime.Now.Month;
+        public int? Year { get; set; } = DateTime.Now.Year;
+    }
     public class SearchOptions
     {
         public int PageSize { get; set; } = 20;

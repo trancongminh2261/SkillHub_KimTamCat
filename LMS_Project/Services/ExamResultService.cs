@@ -62,7 +62,6 @@ namespace LMS_Project.Services
                 {
                     try
                     {
-                        //khai báo ở ngoài if này là vì còn dùng lại ở tít dưới => đừng sửa code chỗ này =)))
                         var examPeriod = new tbl_ExamPeriod();
                         if (model.ExamPeriodId != null && model.ExamPeriodId != 0)
                         {
@@ -420,15 +419,19 @@ namespace LMS_Project.Services
                         {
                             examResult.IsPass = true;
                             await LessonVideoService.Completed(db, examResult.LessonVideoId, user, examResult.Id, examResult.TotalPoint);
-                            //nếu submit cho kì thi => pass thì reset certificate
+                            //nếu submit cho kì thi 
                             if (model.ExamPeriodId != null && model.ExamPeriodId != 0)
                             {
-                                var checkCertificate = await db.tbl_Certificate.SingleOrDefaultAsync(x => x.Enable == true && x.UserId == user.UserInformationId && x.VideoCourseId == examPeriod.VideoCourseId);
-                                if(checkCertificate == null)
+                                //nếu kì thi này có gắn với thông tin khóa học => pass thì gửi chứng chỉ nếu chưa có hoặc reset thời hạn nếu có rồi
+                                if (examPeriod.VideoCourseId != 0 || examPeriod.VideoCourseId != null)
                                 {
-                                    //Cấp chứng chỉ
-                                    await CertificateService.CreateCertificate(db, videoCourseId, user.UserInformationId);
-                                }
+                                    var checkCertificate = await db.tbl_Certificate.SingleOrDefaultAsync(x => x.Enable == true && x.UserId == user.UserInformationId && x.VideoCourseId == examPeriod.VideoCourseId);
+                                    if (checkCertificate == null)
+                                    {
+                                        //Cấp chứng chỉ
+                                        await CertificateService.CreateCertificateByExamPeriod(db, examPeriod.Id, user.UserInformationId);
+                                    }
+                                }                              
                             }
                         }
                         await db.SaveChangesAsync();
@@ -455,7 +458,9 @@ namespace LMS_Project.Services
                     $"@VideoCourseId = {search.VideoCourseId}," +
                     $"@Status = {search.Status}," +
                     $"@TeacherId = {(userLog.RoleId == ((int)RoleEnum.teacher) ? userLog.UserInformationId : search.TeacherId)}," +
-                    $"@StudentId ={(userLog.RoleId == ((int)RoleEnum.student) ? userLog.UserInformationId : search.StudentId)}";
+                    $"@StudentId ={(userLog.RoleId == ((int)RoleEnum.student) ? userLog.UserInformationId : search.StudentId)}," +
+                    $"@DepartmentId = {search.DepartmentId ?? 0}," +
+                    $"@Search = N'{search.Search ?? ""}'";
                 var data = await db.Database.SqlQuery<Get_ExamResult>(sql).ToListAsync();
                 if (!data.Any()) return new AppDomainResult { TotalRow = 0, Data = null };
                 var totalRow = data[0].TotalRow;
@@ -495,6 +500,15 @@ namespace LMS_Project.Services
                 var examResult = await db.tbl_ExamResult.SingleOrDefaultAsync(x => x.Id == examResultId);
                 if (examResult == null)
                     return new ExamResultDetailResult { TotalRow = 0, Data = null };
+                if(examResult.ExamPeriodId != null && examResult.ExamPeriodId != 0)
+                {
+                    var examPeriod = await db.tbl_ExamPeriod.FirstOrDefaultAsync(x => x.Enable == true && x.Id == examResult.ExamPeriodId);
+                    if(examPeriod != null)
+                    {
+                        if (DateTime.Now <= examPeriod.StartTime)
+                            throw new Exception("Kỳ thi chưa kết thúc không thể xem kết quả");
+                    }                    
+                }
                 var exam = await db.tbl_Exam.SingleOrDefaultAsync(x => x.Id == examResult.ExamId);
                 var data = await db.Database.SqlQuery<Get_ExamResultDetail>(sql).ToListAsync();
                 if (!data.Any()) return new ExamResultDetailResult { TotalRow = 0, Data = null };

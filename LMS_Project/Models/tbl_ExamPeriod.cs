@@ -30,7 +30,7 @@ namespace LMS_Project.Models
         /// <summary>
         /// chương trình học
         /// </summary>
-        public int VideoCourseId { get; set; }
+        public int? VideoCourseId { get; set; }
         /// <summary>
         /// đề kiểm tra
         /// </summary>
@@ -38,7 +38,7 @@ namespace LMS_Project.Models
         /// <summary>
         /// thời gian gia hạn (bao nhiêu tháng)
         /// </summary>
-        public int ExtensionPeriod { get; set; }
+        public int? ExtensionPeriod { get; set; }
         /// <summary>
         /// điểm sàn ( mức điểm cần đạt được để vượt qua kỳ thi )
         /// </summary>
@@ -56,7 +56,7 @@ namespace LMS_Project.Models
         /// <summary>
         /// số lượng tối đa
         /// </summary>
-        public int MaxQuantity { get; set; }
+        public int? MaxQuantity { get; set; }
         public tbl_ExamPeriod() : base() { }
         public tbl_ExamPeriod(object model) : base(model) { }
     }
