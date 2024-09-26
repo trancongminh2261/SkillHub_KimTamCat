@@ -63,7 +63,15 @@ namespace LMS_Project.Services.UserInUserInExamPeriod
                 var examPeriod = await dbContext.tbl_ExamPeriod.SingleOrDefaultAsync(x => x.Enable == true && x.Id == request.ExamPeriodId);
                 if (examPeriod == null)
                     throw new Exception("Không tìm thấy đợt thi");
+
                 var listUserInExamPeriod = await dbContext.tbl_UserInExamPeriod.Where(x => x.Enable == true && x.ExamPeriodId == request.ExamPeriodId).ToListAsync() ?? new List<tbl_UserInExamPeriod>();
+
+                if(examPeriod.MaxQuantity != null && examPeriod.MaxQuantity != 0)
+                {
+                    var totalSlot = examPeriod.MaxQuantity - listUserInExamPeriod.Count;
+                    if (request.ListUserId.Count > totalSlot)
+                        throw new Exception($"Kỳ thi chỉ còn {totalSlot} chỗ trống.");
+                }
                 string domain = ConfigurationManager.AppSettings["DomainFE"].ToString();
                 string projectName = ConfigurationManager.AppSettings["ProjectName"].ToString();
                 string href = $"<a href=\"{domain}/testing-exam/\"><b style=\"color: blue;\">Tại đây</b></a>";

@@ -70,7 +70,7 @@ namespace LMS_Project.Services
                     dbContext.tbl_VideoConfig.Add(model);
                     await dbContext.SaveChangesAsync();
 
-                    if (request.VideoConfigQuestions.Any())
+                    if (request.Type == VideoConfigEnum.Type.AnswerQuestion && request.VideoConfigQuestions != null && request.VideoConfigQuestions.Any())
                     {
                         foreach (var question in request.VideoConfigQuestions)
                         {
@@ -79,7 +79,7 @@ namespace LMS_Project.Services
                             videoConfigQuestion.CreatedOn = DateTime.Now;
                             videoConfigQuestion.ModifiedOn = DateTime.Now;
                             videoConfigQuestion.VideoConfigId = model.Id;
-                            videoConfigQuestion.Index = await NewIndex(model.Id); ;
+                            videoConfigQuestion.Index = await NewIndex(model.Id);
                             dbContext.tbl_VideoConfigQuestion.Add(videoConfigQuestion);
                             await dbContext.SaveChangesAsync();
                             if (question.VideoConfigOptions.Any())
@@ -123,60 +123,48 @@ namespace LMS_Project.Services
                     entity.ModifiedBy = currentUser.FullName;
                     entity.ModifiedOn = DateTime.Now;
                     await dbContext.SaveChangesAsync();
-                    if (request.VideoConfigQuestions.Any())
+                    //xóa hết danh sách câu hỏi và câu trả lời
+                    var listQuestion = await dbContext.tbl_VideoConfigQuestion.Where(x => x.Enable == true && x.VideoConfigId == entity.Id).ToListAsync();
+                    if(listQuestion.Count > 0)
                     {
-                        foreach (var item in request.VideoConfigQuestions)
-                        {
-                            var question = await dbContext.tbl_VideoConfigQuestion.SingleOrDefaultAsync(x => x.Enable == true && x.Id == item.Id);
-                            if (question == null)
+                        foreach(var question in listQuestion)
+                        {                      
+                            var listOption = await dbContext.tbl_VideoConfigOption.Where(x => x.Enable == true && x.VideoConfigQuestionId == question.Id).ToListAsync();
+                            if (listOption.Count > 0)
                             {
-                                question = new tbl_VideoConfigQuestion(item);
-                                question.VideoConfigId = entity.Id;
-                                question.Index = await NewIndex(entity.Id);
-                                question.ModifiedBy = question.CreatedBy = currentUser.FullName;
-                                question.ModifiedOn = question.CreatedOn = DateTime.Now;
-                                question.Enable = true;
-                                dbContext.tbl_VideoConfigQuestion.Add(question);
+                                dbContext.tbl_VideoConfigOption.RemoveRange(listOption);
                             }
-                            else
-                            {
-                                question.Content = item.Content ?? question.Content;
-                                question.Index = item.Index ?? question.Index;
-                                question.Enable = item.Enable ?? question.Enable;
-                                question.ModifiedOn = DateTime.Now;
-                                question.ModifiedBy = currentUser.FullName;
-                                if(question.Enable == false)
-                                    await ReloadIndex(entity.Id);
-                            }
+                            dbContext.tbl_VideoConfigQuestion.Remove(question);
                             await dbContext.SaveChangesAsync();
-                            if (item.VideoConfigOptions.Any())
+                        }
+                    }
+
+                    //tạo danh sách câu hỏi và lựa chọn mới mà FE gửi xuống
+                    if (request.VideoConfigQuestions != null && request.VideoConfigQuestions.Any())
+                    {
+                        foreach (var question in request.VideoConfigQuestions)
+                        {
+                            var videoConfigQuestion = new tbl_VideoConfigQuestion(question);
+                            videoConfigQuestion.ModifiedBy = videoConfigQuestion.CreatedBy = currentUser.FullName;
+                            videoConfigQuestion.CreatedOn = DateTime.Now;
+                            videoConfigQuestion.ModifiedOn = DateTime.Now;
+                            videoConfigQuestion.VideoConfigId = entity.Id;
+                            videoConfigQuestion.Index = await NewIndex(entity.Id); ;
+                            dbContext.tbl_VideoConfigQuestion.Add(videoConfigQuestion);
+                            await dbContext.SaveChangesAsync();
+                            if (question.VideoConfigOptions.Any())
                             {
-                                foreach (var jtem in item.VideoConfigOptions)
+                                foreach (var option in question.VideoConfigOptions)
                                 {
-                                    var option = await dbContext.tbl_VideoConfigOption.SingleOrDefaultAsync(x => x.Enable == true && x.Id == jtem.Id);
-                                    if (option == null)
-                                    {
-                                        option = new tbl_VideoConfigOption(jtem);
-                                        option.VideoConfigQuestionId = question.Id;
-                                        option.ModifiedBy = question.CreatedBy = currentUser.FullName;
-                                        option.ModifiedOn = question.CreatedOn = DateTime.Now;
-                                        option.Enable = true;
-                                        dbContext.tbl_VideoConfigOption.Add(option);
-                                        await dbContext.SaveChangesAsync();
-                                    }
-                                    else
-                                    {
-                                        option.Content = jtem.Content ?? option.Content;
-                                        option.IsCorrect = jtem.IsCorrect ?? option.IsCorrect;
-                                        option.Enable = jtem.Enable ?? option.Enable;
-                                        option.ModifiedOn = DateTime.Now;
-                                        option.ModifiedBy = currentUser.FullName;
-                                        await dbContext.SaveChangesAsync();
-                                    }
+                                    var videoConfigOption = new tbl_VideoConfigOption(option);
+                                    videoConfigOption.VideoConfigQuestionId = videoConfigQuestion.Id;
+                                    videoConfigOption.ModifiedBy = videoConfigOption.CreatedBy = currentUser.FullName;
+                                    videoConfigOption.IsCorrect = videoConfigOption.IsCorrect;
+                                    dbContext.tbl_VideoConfigOption.Add(videoConfigOption);
+                                    await dbContext.SaveChangesAsync();
                                 }
                             }
                         }
-                        await ReloadIndex(entity.Id);
                     }
                     tran.Commit();
                     return await GetById(entity.Id);
@@ -240,7 +228,6 @@ namespace LMS_Project.Services
             return videoConfigDetailDTO;
         }
 
-
         public async Task<IList<VideoConfigDTO>> GetByLessonVideo(int lessonVideoId)
         {
             var data = await dbContext.tbl_VideoConfig.Where(x => x.Enable == true && x.LessonVideoId == lessonVideoId)
@@ -249,7 +236,12 @@ namespace LMS_Project.Services
                         LessonVideoId = x.LessonVideoId,
                         Type = x.Type,
                         StopInMinute = x.StopInMinute,
-                        TotalQuestion = 0
+                        TotalQuestion = 0,
+                        Id = x.Id,
+                        CreatedBy = x.CreatedBy,
+                        CreatedOn = x.CreatedOn,
+                        ModifiedBy = x.ModifiedBy,
+                        ModifiedOn = x.ModifiedOn
                     }).ToListAsync();
             foreach (var item in data)
             {

@@ -1,4 +1,5 @@
-﻿using LMS_Project.Areas.Models;
+﻿using LMS_Project.Areas.ControllerAPIs.ExamPeriod;
+using LMS_Project.Areas.Models;
 using LMS_Project.DTO.ExamPeriod;
 using LMS_Project.Models;
 using LMS_Project.Services;
@@ -108,7 +109,7 @@ namespace LMS_Project.Areas.ControllerAPIs
         }
         [HttpGet]
         [Route("api/Dashboard/statistical-exam-period")]
-        [SwaggerResponse(200, "OK", typeof(AppDomainResult<ExamPeriodDTO>))]
+        [SwaggerResponse(200, "OK", typeof(AppDomainResult<ExamPeriodStatistical>))]
         public async Task<HttpResponseMessage> StatisticalExamPeriod([FromUri] StatisticalSearch baseSearch)
         {
             var data = await domainService.StatisticalExamPeriod(baseSearch, GetCurrentUser());
