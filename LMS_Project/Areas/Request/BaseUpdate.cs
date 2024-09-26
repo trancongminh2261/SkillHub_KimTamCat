@@ -368,17 +368,17 @@ namespace LMS_Project.Areas.Request
         public VideoConfigEnum.Type? Type { get; set; }
         public List<VideoConfigQuestionUpdate> VideoConfigQuestions { get; set; }
     }
-    public class VideoConfigQuestionUpdate : BaseUpdate
+    //chỗ này dùng base create k sai đâu nên đừng sửa nha =))
+    //mỗi lần cập nhật là FE gửi danh sách mới xuống luôn
+    public class VideoConfigQuestionUpdate : BaseCreate
     {
         public string Content { get; set; }
         public int? Index { get; set; }
-        public bool? Enable { get; set; }
         public List<VideoConfigOptionUpdate> VideoConfigOptions { get; set; }
     }
-    public class VideoConfigOptionUpdate : BaseUpdate
+    public class VideoConfigOptionUpdate : BaseCreate
     {
         public string Content { get; set; }
         public bool? IsCorrect { get; set; }
-        public bool? Enable { get; set; }
     }
 }

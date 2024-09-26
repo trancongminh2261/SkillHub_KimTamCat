@@ -46,9 +46,12 @@ namespace LMS_Project.Services.ExamPeriod
                 throw new Exception("Mã kỳ thi đã tồn tại");
             if(request.EndTime < request.StartTime)
                 throw new Exception("Thời gian kết thúc không được lớn hơn thời gian bắt đầu");
-            var checkVideoCourse = await dbContext.tbl_VideoCourse.AnyAsync(x => x.Enable == true && x.Id == request.VideoCourseId);
-            if (!checkVideoCourse)
-                throw new Exception("Chương trình học không tồn tại");
+            if (request.VideoCourseId != 0 && request.VideoCourseId != null)
+            {
+                var checkVideoCourse = await dbContext.tbl_VideoCourse.AnyAsync(x => x.Enable == true && x.Id == request.VideoCourseId);
+                if (!checkVideoCourse)
+                    throw new Exception("Chương trình học không tồn tại");
+            }        
             var checkExam = await dbContext.tbl_Exam.AnyAsync(x => x.Enable == true && x.Id == request.ExamId);
             if (!checkExam)
                 throw new Exception("Đề thi không tồn tại");
@@ -62,8 +65,8 @@ namespace LMS_Project.Services.ExamPeriod
             var data = await dbContext.tbl_ExamPeriod.SingleOrDefaultAsync(x => x.Id == request.Id && x.Enable == true);
             if (data == null)
                 throw new Exception("Không tìm thấy dữ liệu");
-            if (data.Status != ExamPeriodEnum.Status.UpComing.ToString())
-                throw new Exception("Kỳ thi đã diễn ra không thể cập nhật");
+            /*if (data.Status != ExamPeriodEnum.Status.UpComing.ToString())
+                throw new Exception("Kỳ thi đã diễn ra không thể cập nhật");*/
             data.Code = request.Code ?? data.Code;
             data.Name = request.Name ?? data.Name;
             data.StartTime = request.StartTime ?? data.StartTime;
@@ -338,7 +341,7 @@ namespace LMS_Project.Services.ExamPeriod
 
                 //cập nhật lớp kết thúc
                 var listExamPeriodClosed = await db.tbl_ExamPeriod
-                    .Where(x => x.Enable == true && timenow > x.EndTime && x.Status == ExamPeriodEnum.Status.Closed.ToString())
+                    .Where(x => x.Enable == true && timenow > x.EndTime && x.Status != ExamPeriodEnum.Status.Closed.ToString())
                     .ToListAsync();
                 if (listExamPeriodClosed.Count > 0)
                 {
