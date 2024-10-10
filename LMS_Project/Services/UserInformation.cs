@@ -228,8 +228,7 @@ namespace LMS_Project.Services
                 if (baseSearch == null) baseSearch = new UserSearch();
                 string sql = $"Get_User @PageIndex = {baseSearch.PageIndex}," +
                     $"@PageSize = {baseSearch.PageSize}," +
-                    $"@FullName = N'{baseSearch.FullName ?? ""}'," +
-                    $"@UserCode = N'{baseSearch.UserCode ?? ""}'," +
+                    $"@Search = N'{baseSearch.Search ?? ""}'," +
                     $"@RoleId = N'{baseSearch.RoleIds ?? ""}'," +
                     $"@Gender = N'{baseSearch.Genders ?? ""}'," +
                     $"@Sort = {baseSearch.Sort}," +

@@ -26,6 +26,8 @@ using System.Net.Http.Headers;
 using System.Configuration;
 using LMS_Project.DTO.ServerDownload;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Swashbuckle.Swagger.Annotations;
 
 namespace LMS_Project.Areas.ControllerAPIs
 {
@@ -440,6 +442,32 @@ namespace LMS_Project.Areas.ControllerAPIs
                 }
             }
         }
+
+        [HttpGet]
+        [Route("api/LessonVideo/GetTimeOfYTB")]
+        //[SwaggerResponse(200, "OK", typeof(int))]
+        public async Task<HttpResponseMessage> GetTimeOfYTB([FromUri] string embedUrl)
+        {
+            try
+            {
+                string apiKey = "AIzaSyBTqnYekvYNRBkmmNEizhXOmNYrDGKkug4";
+                string videoId = AssetCRM.ExtractVideoId(embedUrl);
+                string apiUrl = $"https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id={videoId}&key={apiKey}";
+                using (HttpClient client = new HttpClient())
+                {
+                    var response = await client.GetStringAsync(apiUrl);
+                    JObject json = JObject.Parse(response);
+                    string duration = json["items"][0]["contentDetails"]["duration"].ToString();
+                    int totalSeconds = AssetCRM.ConvertYouTubeDurationToSeconds(duration);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data = totalSeconds });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, new { message = ex.Message });
+            }              
+        }     
+
         //[HttpPost]
         //[Route("api/LessonVideo/test")]
         //public async Task<HttpResponseMessage> test()

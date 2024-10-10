@@ -1165,7 +1165,7 @@ namespace LMS_Project.Services
                 totalData = listUser.Count(x => x.RoleId == (int)RoleEnum.manager);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng quản lý",
+                    Type = "Quản lý",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1174,7 +1174,7 @@ namespace LMS_Project.Services
                 totalData = listUser.Count(x => x.RoleId == (int)RoleEnum.teacher);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng giáo viên",
+                    Type = "Giáo viên",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1183,7 +1183,7 @@ namespace LMS_Project.Services
                 totalData = listUser.Count(x => x.RoleId == (int)RoleEnum.student);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng nhân viên",
+                    Type = "Nhân viên",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1193,7 +1193,7 @@ namespace LMS_Project.Services
                 totalData = listCertificate.Count;
                 data = new StatisticalModel
                 {
-                    Type = "Tổng chứng chỉ",
+                    Type = "Chứng chỉ",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1234,7 +1234,7 @@ namespace LMS_Project.Services
                 totalData = listUserInDepartment.Count(x => x.RoleId == (int)RoleEnum.manager);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng quản lý",
+                    Type = "Quản lý",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1243,7 +1243,7 @@ namespace LMS_Project.Services
                 totalData = listUserInDepartment.Count(x => x.RoleId == (int)RoleEnum.teacher);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng giáo viên",
+                    Type = "Giáo viên",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1252,7 +1252,7 @@ namespace LMS_Project.Services
                 totalData = listUserInDepartment.Count(x => x.RoleId == (int)RoleEnum.student);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng nhân viên",
+                    Type = "Nhân viên",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1264,7 +1264,7 @@ namespace LMS_Project.Services
                 totalData = listCertificate.Count;
                 data = new StatisticalModel
                 {
-                    Type = "Tổng chứng chỉ",
+                    Type = "Chứng chỉ",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1306,7 +1306,7 @@ namespace LMS_Project.Services
                 totalData = listUserInDepartment.Count(x => x.RoleId == (int)RoleEnum.teacher);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng giáo viên",
+                    Type = "Giáo viên",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1315,7 +1315,7 @@ namespace LMS_Project.Services
                 totalData = listUserInDepartment.Count(x => x.RoleId == (int)RoleEnum.student);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng nhân viên",
+                    Type = "Nhân viên",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1327,7 +1327,7 @@ namespace LMS_Project.Services
                 totalData = listCertificate.Count;
                 data = new StatisticalModel
                 {
-                    Type = "Tổng chứng chỉ",
+                    Type = "Chứng chỉ",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1382,7 +1382,7 @@ namespace LMS_Project.Services
                 totalData = listCertificate.Count;
                 data = new StatisticalModel
                 {
-                    Type = "Tổng chứng chỉ",
+                    Type = "Chứng chỉ",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1418,7 +1418,7 @@ namespace LMS_Project.Services
                 totalData = listVideoCourseStudent.Count(x => x.Status == 2);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng khóa học đang học",
+                    Type = "Khóa học đang học",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1426,7 +1426,7 @@ namespace LMS_Project.Services
                 totalData = listVideoCourseStudent.Count(x => x.Status == 3);
                 data = new StatisticalModel
                 {
-                    Type = "Tổng khóa học đã học xong",
+                    Type = "Khóa học đã học xong",
                     Value = totalData
                 };
                 result.Add(data);
@@ -1449,7 +1449,7 @@ namespace LMS_Project.Services
             if (userLogin.RoleId == (int)RoleEnum.admin)
             {
                 var listSeminar = await dbContext.tbl_Seminar.Where(x => x.Enable == true
-                    && x.CreatedOn.Value.Month == time.Month && x.CreatedOn.Value.Year == time.Year).ToListAsync();
+                    && x.StartTime.Value.Month == time.Month && x.StartTime.Value.Year == time.Year).ToListAsync();
                 if (listSeminar.Count <= 0) return result;
                 //lớp sắp diễn ra
                 data = new StatisticalModel();
@@ -1476,7 +1476,7 @@ namespace LMS_Project.Services
             if (userLogin.RoleId == (int)RoleEnum.manager)
             {
                 var listSeminar = await dbContext.tbl_Seminar.Where(x => x.Enable == true
-                    && x.CreatedOn.Value.Month == time.Month && x.CreatedOn.Value.Year == time.Year).ToListAsync();
+                    && x.StartTime.Value.Month == time.Month && x.StartTime.Value.Year == time.Year).ToListAsync();
                 if (listSeminar.Count <= 0) return result;
                 //lớp sắp diễn ra
                 data = new StatisticalModel();
@@ -1504,7 +1504,7 @@ namespace LMS_Project.Services
             {
                 var listSeminar = await dbContext.tbl_Seminar.Where(x => x.Enable == true
                     && x.LeaderId == userLogin.UserInformationId
-                    && x.CreatedOn.Value.Month == time.Month && x.CreatedOn.Value.Year == time.Year).ToListAsync();
+                    && x.StartTime.Value.Month == time.Month && x.StartTime.Value.Year == time.Year).ToListAsync();
                 if (listSeminar.Count <= 0) return result;
                 //lớp sắp diễn ra
                 data = new StatisticalModel();
@@ -1537,7 +1537,8 @@ namespace LMS_Project.Services
             public string FullName { get; set; }
             public string Avatar { get; set; }
             public string DepartmentName { get; set; }
-            public double TotalPoint { get; set; } = 0;
+            //public double TotalPoint { get; set; } = 0;
+            public int TotalLessonCompleted { get; set; } = 0;
         }
         public async Task<AppDomainResult<AcademicRankModel>> AcademicRank(StatisticalSearch baseSearch, tbl_UserInformation userLogin)
         {
@@ -1546,7 +1547,8 @@ namespace LMS_Project.Services
             var result = new List<AcademicRankModel>();
             var listDepartment = await dbContext.tbl_Department.Where(x => x.Enable == true).ToListAsync() ?? new List<tbl_Department>();
             var listStudent = await dbContext.tbl_UserInformation.Where(x => x.Enable == true && x.RoleId == (int)RoleEnum.student).ToListAsync() ?? new List<tbl_UserInformation>();
-            var listExamResult = await dbContext.tbl_ExamResult.Where(x => x.Enable == true && x.MyPoint != null && x.MyPoint > 0).ToListAsync() ?? new List<tbl_ExamResult>();
+            var listLessonCompleted = await dbContext.tbl_LessonCompleted.Where(x => x.Enable == true && x.CreatedOn.Value.Month == time.Month && x.CreatedOn.Value.Year == time.Year).ToListAsync() ?? new List<tbl_LessonCompleted>();
+            //var listExamResult = await dbContext.tbl_ExamResult.Where(x => x.Enable == true && x.MyPoint != null && x.MyPoint > 0).ToListAsync() ?? new List<tbl_ExamResult>();
             #region admin
             if (userLogin.RoleId == (int)RoleEnum.admin)
             {
@@ -1561,11 +1563,12 @@ namespace LMS_Project.Services
                     var department = listDepartment.FirstOrDefault(x => x.Id == item.DepartmentId);
                     if (department != null)
                         data.DepartmentName = department.Name;
-                    var studentExamResults = listExamResult.Where(x => x.StudentId == item.UserInformationId).ToList();
+                    data.TotalLessonCompleted = listLessonCompleted.Count(x => x.UserId == item.UserInformationId);
+                    /*var studentExamResults = listExamResult.Where(x => x.StudentId == item.UserInformationId).ToList();
                     if (studentExamResults.Count > 0)
                     {
                         data.TotalPoint = studentExamResults.Sum(x => x.MyPoint);
-                    }
+                    }*/
                     result.Add(data);
                 }
             }
@@ -1585,11 +1588,12 @@ namespace LMS_Project.Services
                     var department = listDepartment.FirstOrDefault(x => x.Id == item.DepartmentId);
                     if (department != null)
                         data.DepartmentName = department.Name;
-                    var studentExamResults = listExamResult.Where(x => x.StudentId == item.UserInformationId).ToList();
+                    data.TotalLessonCompleted = listLessonCompleted.Count(x => x.UserId == item.UserInformationId);
+                    /*var studentExamResults = listExamResult.Where(x => x.StudentId == item.UserInformationId).ToList();
                     if (studentExamResults.Count > 0)
                     {
                         data.TotalPoint = studentExamResults.Sum(x => x.MyPoint);
-                    }
+                    }*/
                     result.Add(data);
                 }
             }
@@ -1609,17 +1613,18 @@ namespace LMS_Project.Services
                     var department = listDepartment.FirstOrDefault(x => x.Id == item.DepartmentId);
                     if (department != null)
                         data.DepartmentName = department.Name;
-                    var studentExamResults = listExamResult.Where(x => x.StudentId == item.UserInformationId).ToList();
+                    data.TotalLessonCompleted = listLessonCompleted.Count(x => x.UserId == item.UserInformationId);
+                    /*var studentExamResults = listExamResult.Where(x => x.StudentId == item.UserInformationId).ToList();
                     if (studentExamResults.Count > 0)
                     {
                         data.TotalPoint = studentExamResults.Sum(x => x.MyPoint);
-                    }
+                    }*/
                     result.Add(data);
                 }
             }
             #endregion
             var totalRow = result.Count;
-            result = result.OrderByDescending(x => x.TotalPoint).ToList();
+            result = result.OrderByDescending(x => x.TotalLessonCompleted).ToList();
             // Phân trang
             int startIndex = (baseSearch.PageIndex - 1) * baseSearch.PageSize;
             result = result.Skip(startIndex).Take(baseSearch.PageSize).ToList();
@@ -1655,13 +1660,13 @@ namespace LMS_Project.Services
                 listStudent = listStudent.Skip(startIndex).Take(baseSearch.PageSize).ToList();
                 foreach (var student in listStudent)
                 {
-                    double totalExam = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId == null);
-                    double totalPassExam = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId == null && x.IsPass == true);
+                    double totalExam = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId == null);
+                    double totalPassExam = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId == null && x.IsPass == true);
                     double ratePassExam = 0;
                     if (totalExam > 0)
                         ratePassExam = Math.Round((totalPassExam / totalExam * 100), 2);
-                    double totalExamPeriod = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId != null);
-                    double totalPassExamPeriod = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId != null && x.IsPass == true);
+                    double totalExamPeriod = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId != null);
+                    double totalPassExamPeriod = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId != null && x.IsPass == true);
                     double ratePassExamPeriod = 0;
                     if (totalExamPeriod > 0)
                         ratePassExamPeriod = Math.Round((totalPassExamPeriod / totalExamPeriod * 100), 2);
@@ -1688,13 +1693,13 @@ namespace LMS_Project.Services
                 listStudent = listStudent.Skip(startIndex).Take(baseSearch.PageSize).ToList();
                 foreach (var student in listStudent)
                 {
-                    double totalExam = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId == null);
-                    double totalPassExam = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId == null && x.IsPass == true);
+                    double totalExam = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId == null);
+                    double totalPassExam = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId == null && x.IsPass == true);
                     double ratePassExam = 0;
                     if (totalExam > 0)
                         ratePassExam = Math.Round((totalPassExam / totalExam * 100), 2);
-                    double totalExamPeriod = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId != null);
-                    double totalPassExamPeriod = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId != null && x.IsPass == true);
+                    double totalExamPeriod = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId != null);
+                    double totalPassExamPeriod = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId != null && x.IsPass == true);
                     double ratePassExamPeriod = 0;
                     if (totalExamPeriod > 0)
                         ratePassExamPeriod = Math.Round((totalPassExamPeriod / totalExamPeriod * 100), 2);
@@ -1721,13 +1726,13 @@ namespace LMS_Project.Services
                 listStudent = listStudent.Skip(startIndex).Take(baseSearch.PageSize).ToList();
                 foreach (var student in listStudent)
                 {
-                    double totalExam = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId == null);
-                    double totalPassExam = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId == null && x.IsPass == true);
+                    double totalExam = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId == null);
+                    double totalPassExam = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId == null && x.IsPass == true);
                     double ratePassExam = 0;
                     if (totalExam > 0)
                         ratePassExam = Math.Round((totalPassExam / totalExam * 100), 2);
-                    double totalExamPeriod = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId != null);
-                    double totalPassExamPeriod = listExamResult.Count(x => x.StudentId != student.UserInformationId && x.ExamPeriodId != null && x.IsPass == true);
+                    double totalExamPeriod = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId != null);
+                    double totalPassExamPeriod = listExamResult.Count(x => x.StudentId == student.UserInformationId && x.ExamPeriodId != null && x.IsPass == true);
                     double ratePassExamPeriod = 0;
                     if (totalExamPeriod > 0)
                         ratePassExamPeriod = Math.Round((totalPassExamPeriod / totalExamPeriod * 100), 2);
@@ -1906,7 +1911,7 @@ namespace LMS_Project.Services
                     data.TotalSubmit = listExamResult.Count(x => x.ExamPeriodId == item.Id);
                     data.TotalNotSubmit = data.TotalJoined - data.TotalSubmit;
                     data.TotalPass = listExamResult.Count(x => x.ExamPeriodId == item.Id && x.IsPass == true);
-                    data.TotalFail = data.TotalJoined - data.TotalSubmit;
+                    data.TotalFail = data.TotalJoined - data.TotalPass;
                     data.RatePass = 0;
                     if (data.TotalJoined > 0)
                         data.RatePass = Math.Round(((double)data.TotalPass / (double)data.TotalJoined * 100), 2);

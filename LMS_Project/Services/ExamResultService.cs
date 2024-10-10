@@ -54,7 +54,22 @@ namespace LMS_Project.Services
         /// <param name="model"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        public static async Task<tbl_ExamResult> Submit(ExamSubmit model, tbl_UserInformation user)
+        public class SubmitResult
+        {
+            /// <summary>
+            /// dữ liệu trả về
+            /// </summary>
+            public tbl_ExamResult data { get; set; }
+            /// <summary>
+            /// cảnh bảo (áp dụng khi học viên thi trượt)
+            /// </summary>
+            public bool IsWarning { get; set; } = false;
+            /// <summary>
+            /// nội dung cảnh báo
+            /// </summary>
+            public string WarningMessage { get; set; }
+        }
+        public static async Task<SubmitResult> Submit(ExamSubmit model, tbl_UserInformation user)
         {
             using (var db = new lmsDbContext())
             {
@@ -415,6 +430,10 @@ namespace LMS_Project.Services
                         }
                         examResult.MyPoint = mypoint;
                         examResult.TotalPoint = totalPoint;
+
+                        var result = new SubmitResult();
+
+                        //nếu vượt qua bài kiểm tra/ bài thi
                         if (examResult.MyPoint >= exam.PassPoint)
                         {
                             examResult.IsPass = true;
@@ -423,7 +442,7 @@ namespace LMS_Project.Services
                             if (model.ExamPeriodId != null && model.ExamPeriodId != 0)
                             {
                                 //nếu kì thi này có gắn với thông tin khóa học => pass thì gửi chứng chỉ nếu chưa có hoặc reset thời hạn nếu có rồi
-                                if (examPeriod.VideoCourseId != 0 || examPeriod.VideoCourseId != null)
+                                if (examPeriod.VideoCourseId != 0 && examPeriod.VideoCourseId != null)
                                 {
                                     var checkCertificate = await db.tbl_Certificate.SingleOrDefaultAsync(x => x.Enable == true && x.UserId == user.UserInformationId && x.VideoCourseId == examPeriod.VideoCourseId);
                                     if (checkCertificate == null)
@@ -433,10 +452,43 @@ namespace LMS_Project.Services
                                     }
                                 }                              
                             }
+                        }                      
+                        //nếu không vượt qua 
+                        if (examResult.MyPoint < exam.PassPoint)
+                        {
+                            examResult.IsPass = false;
+                            await db.SaveChangesAsync();
+                            //xử lý khi k vượt qua bài thi
+                            if (model.ExamPeriodId != null && model.ExamPeriodId != 0 && examPeriod.VideoCourseId != 0 && examPeriod.VideoCourseId != null)
+                            {
+                                result.IsWarning = true;
+                                //kiểm tra xem nhân viên đã thi trượt mấy lần
+                                //nếu thi trượt 3 lần => xóa luôn chứng chỉ và tiến trình học => bắt học lại
+                                var checkExamResult = await db.tbl_ExamResult.CountAsync(x => x.Enable == true && x.IsPass != true && x.StudentId == user.UserInformationId && x.ExamPeriodId == examPeriod.Id);
+                                if(checkExamResult >= 3)
+                                {
+                                    result.WarningMessage = "Bạn đã thi trượt 3 lần, hệ thống sẽ thu hồi chứng chỉ và làm mới tiến trình khóa học của bạn!";
+                                    //xóa chứng chỉ
+                                    var certificate = await db.tbl_Certificate.FirstOrDefaultAsync(x => x.Enable == true && x.UserId == user.UserInformationId && x.VideoCourseId == examPeriod.VideoCourseId);
+                                    if (certificate != null)
+                                        certificate.Enable = false;
+                                    //xóa tiến trình học
+                                    var videoCourseStudent = await db.tbl_VideoCourseStudent.FirstOrDefaultAsync(x => x.Enable == true && x.UserId == user.UserInformationId && x.VideoCourseId == examPeriod.VideoCourseId);
+                                    if (videoCourseStudent != null)
+                                        videoCourseStudent.Enable = false;
+                                    await db.SaveChangesAsync();
+                                }
+                                else
+                                {
+                                    result.WarningMessage = $"Bạn đã thi trượt {checkExamResult} lần, còn {3 - checkExamResult} lần thi. Cố gắng hơn trong lần thi tiếp theo nhé!";
+                                }
+                            }
                         }
                         await db.SaveChangesAsync();
+
+                        result.data = examResult;
                         tran.Commit();
-                        return examResult;
+                        return result;
                     }
                     catch (Exception e)
                     {

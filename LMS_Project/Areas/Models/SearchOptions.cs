@@ -180,8 +180,6 @@ namespace LMS_Project.Areas.Models
         /// true: tăng dần, false: giảm dần
         /// </summary>
         public bool SortType { get; set; } = false;
-        public string FullName { get; set; }
-        public string UserCode { get; set; }
         /// <summary>
         /// mẫu 1,2
         /// </summary>
@@ -267,8 +265,14 @@ namespace LMS_Project.Areas.Models
         public VideoCourseAllowEnum.Type Type { get; set; }
         [Required(ErrorMessage = "Vui lòng chọn khóa video")]
         public int VideoCourseId { get; set; }
-
     }
+
+    public class VideoCourseCompletedHistorySearch : SearchOptions
+    {
+        [Required(ErrorMessage = "Vui lòng chọn nhân viên")]
+        public int UserId { get; set; }
+    }
+
     public class UserInExamPeriodSearch : SearchOptions
     {
         [Required(ErrorMessage = "Vui lòng chọn kỳ thi")]

@@ -5,6 +5,7 @@ using LMS_Project.LMS;
 using LMS_Project.Models;
 using LMS_Project.Services;
 using LMS_Project.Users;
+using Swashbuckle.Swagger.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -29,14 +30,15 @@ namespace LMS_Project.Areas.ControllerAPIs
     {
         [HttpPost]
         [Route("api/ExamResult/Submit")]
+        [SwaggerResponse(200, "OK", typeof(SubmitResult))]
         public async Task<HttpResponseMessage> Submit(ExamSubmit model)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var data = await ExamResultService.Submit(model, GetCurrentUser());
-                    return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data });
+                    var result = await ExamResultService.Submit(model, GetCurrentUser());
+                    return Request.CreateResponse(HttpStatusCode.OK, new { message = "Thành công !", data = result.data, IsWarning = result.IsWarning, WarningMessage = result.WarningMessage });
                 }
                 catch (Exception e)
                 {

@@ -11,7 +11,7 @@ namespace LMS_Project.Models
             : base("name=DbContext")
         {
         }
-        //public virtual DbSet<tbl_ExamPeriodResult> tbl_ExamPeriodResult { get; set; }
+        public virtual DbSet<tbl_VideoCourseCompletedHistory> tbl_VideoCourseCompletedHistory { get; set; }
         public virtual DbSet<tbl_UserInExamPeriod> tbl_UserInExamPeriod { get; set; }
         public virtual DbSet<tbl_ExamPeriod> tbl_ExamPeriod { get; set; }
         public virtual DbSet<tbl_VideoConfigOption> tbl_VideoConfigOption { get; set; }
