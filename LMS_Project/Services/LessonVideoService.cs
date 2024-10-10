@@ -881,6 +881,19 @@ namespace LMS_Project.Services
 
                     //Cấp chứng chỉ
                     await CertificateService.CreateCertificate(dbContext, videoCourseId, user.UserInformationId);
+
+                    //lưu lịch sử đã hoàn thành khóa học cho nhân viên
+                    var videoCourseCompletedHistory = new tbl_VideoCourseCompletedHistory();
+                    videoCourseCompletedHistory.UserId = user.UserInformationId;
+                    videoCourseCompletedHistory.VideoCourseId = videoCourseId;
+                    videoCourseCompletedHistory.CompletedDate = DateTime.Now;
+                    videoCourseCompletedHistory.Enable = true;
+                    videoCourseCompletedHistory.CreatedBy = "Hệ thống";
+                    videoCourseCompletedHistory.ModifiedBy = "Hệ thống";
+                    videoCourseCompletedHistory.CreatedOn = DateTime.Now;
+                    videoCourseCompletedHistory.ModifiedOn = DateTime.Now;
+                    dbContext.tbl_VideoCourseCompletedHistory.Add(videoCourseCompletedHistory);
+                    await dbContext.SaveChangesAsync();
                 }
                 else
                 {

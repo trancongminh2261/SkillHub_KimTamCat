@@ -22,6 +22,55 @@ namespace LMS_Project.LMS
         public static string fromAddress = ConfigurationManager.AppSettings["FromAddress"].ToString();
         public static string mailPassword = ConfigurationManager.AppSettings["MailPassword"].ToString();
 
+        //lấy Id video ytb từ link đã được chuyển qua embed
+        public static string ExtractVideoId(string url)
+        {
+            // Kiểm tra nếu URL chứa "embed/"
+            if (url.Contains("/embed/"))
+            {
+                // Tìm vị trí bắt đầu của video_id
+                int startIndex = url.LastIndexOf("/embed/") + "/embed/".Length;
+
+                // Tìm vị trí của dấu "?" để cắt phần tham số, nếu có
+                int endIndex = url.IndexOf("?", startIndex);
+
+                // Nếu không có dấu "?", thì lấy từ startIndex đến hết chuỗi
+                if (endIndex == -1)
+                {
+                    endIndex = url.Length;
+                }
+
+                // Lấy phần từ startIndex đến endIndex (hoặc hết URL nếu không có "?")
+                string videoId = url.Substring(startIndex, endIndex - startIndex);
+                return videoId;
+            }
+            return "";
+        }
+
+        public static int ConvertYouTubeDurationToSeconds(string duration)
+        {
+            // Regex để tách từng phần của chuỗi ISO 8601 (P là khoảng thời gian, T là thời gian)
+            var regex = new Regex(@"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?");
+            var match = regex.Match(duration);
+
+            int hours = 0, minutes = 0, seconds = 0;
+
+            // Kiểm tra xem từng phần có tồn tại không và chuyển sang số nguyên
+            if (match.Groups[1].Success)
+                hours = int.Parse(match.Groups[1].Value);
+
+            if (match.Groups[2].Success)
+                minutes = int.Parse(match.Groups[2].Value);
+
+            if (match.Groups[3].Success)
+                seconds = int.Parse(match.Groups[3].Value);
+
+            // Tính tổng số giây
+            int totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+            return totalSeconds;
+        }
+
         /// <summary>
         /// Tạo chuỗi ký tự gồm số
         /// </summary>

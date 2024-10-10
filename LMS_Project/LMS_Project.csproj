@@ -397,6 +397,7 @@
     <Compile Include="Areas\ControllerAPIs\AccountController.cs" />
     <Compile Include="Areas\ControllerAPIs\VideoConfigController.cs" />
     <Compile Include="Areas\ControllerAPIs\VideoCourseAllowController.cs" />
+    <Compile Include="Areas\ControllerAPIs\VideoCourseCompletedHistory\VideoCourseCompletedHistoryController.cs" />
     <Compile Include="Areas\ControllerAPIs\VideoCourseController.cs" />
     <Compile Include="Areas\ControllerAPIs\VideoCourseStudentController.cs" />
     <Compile Include="Areas\ControllerAPIs\WardController.cs" />
@@ -424,6 +425,7 @@
     <Compile Include="DTO\VideoConfigDetailDTO.cs" />
     <Compile Include="DTO\VideoConfigDTO.cs" />
     <Compile Include="DTO\VideoCourseAllowDTO.cs" />
+    <Compile Include="DTO\VideoCourseCompletedHistory\VideoCourseCompletedHistoryDTO.cs" />
     <Compile Include="DTO\VideoCourseStatusDTO.cs" />
     <Compile Include="Enum\CertificateEnum.cs" />
     <Compile Include="Enum\ExamPeriodEnum.cs" />
@@ -463,6 +465,10 @@
     <Compile Include="Migrations\202409250235106_updateExamPeriod2.cs" />
     <Compile Include="Migrations\202409250235106_updateExamPeriod2.Designer.cs">
       <DependentUpon>202409250235106_updateExamPeriod2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202409290439152_addVideoCourseCompletedHistory.cs" />
+    <Compile Include="Migrations\202409290439152_addVideoCourseCompletedHistory.Designer.cs">
+      <DependentUpon>202409290439152_addVideoCourseCompletedHistory.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\DomainEntity.cs" />
@@ -512,6 +518,7 @@
     <Compile Include="Models\tbl_WriteLog.cs" />
     <Compile Include="Models\tbl_ZoomConfig.cs" />
     <Compile Include="Models\tbl_ZoomRoom.cs" />
+    <Compile Include="Models\tbl_VideoCourseCompletedHistory.cs" />
     <Compile Include="Services\AnswerInVideoService.cs" />
     <Compile Include="Services\Area.cs" />
     <Compile Include="Services\CertificateConfigService.cs" />
@@ -548,6 +555,7 @@
     <Compile Include="Services\UserInformation.cs" />
     <Compile Include="Services\VideoConfigService.cs" />
     <Compile Include="Services\VideoCourseAllowService.cs" />
+    <Compile Include="Services\VideoCourseCompletedHistory\VideoCourseCompletedHistoryService.cs" />
     <Compile Include="Services\VideoCourseService.cs" />
     <Compile Include="Services\VideoCourseStudentService.cs" />
     <Compile Include="Services\Ward.cs" />
@@ -656,6 +664,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202409250235106_updateExamPeriod2.resx">
       <DependentUpon>202409250235106_updateExamPeriod2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202409290439152_addVideoCourseCompletedHistory.resx">
+      <DependentUpon>202409290439152_addVideoCourseCompletedHistory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

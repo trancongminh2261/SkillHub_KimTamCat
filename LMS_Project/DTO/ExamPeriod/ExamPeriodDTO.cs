@@ -69,7 +69,11 @@ namespace LMS_Project.DTO.ExamPeriod
         /// <summary>
         /// trạng thái đã làm hay chưa
         /// </summary>
-        public bool? IsDone { get; set; }
+        public bool? IsAbleToSubmit { get; set; }
+        /// <summary>
+        /// trạng thái đã làm hay chưa
+        /// </summary>
+        public int? TotalSubmit { get; set; }
         public ExamPeriodDTO() : base() { }
         public ExamPeriodDTO(object model) : base(model) { }
     }

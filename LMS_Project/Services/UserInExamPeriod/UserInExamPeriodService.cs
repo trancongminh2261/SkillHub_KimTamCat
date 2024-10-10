@@ -38,7 +38,7 @@ namespace LMS_Project.Services.UserInUserInExamPeriod
             var result = new List<UserInExamPeriodAvailable>();
             if(listUser.Count > 0)
             {
-                if (baseSearch.DepartmentId == null || baseSearch.DepartmentId == 0)
+                if (baseSearch.DepartmentId != null && baseSearch.DepartmentId != 0)
                     listUser = listUser.Where(x => x.DepartmentId == baseSearch.DepartmentId).ToList();
                 result = listUser.Select(x => new UserInExamPeriodAvailable
                 {
