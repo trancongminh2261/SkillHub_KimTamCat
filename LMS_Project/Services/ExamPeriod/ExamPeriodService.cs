@@ -127,7 +127,7 @@ namespace LMS_Project.Services.ExamPeriod
             var examPeriod = await dbContext.tbl_ExamPeriod.SingleOrDefaultAsync(x => x.Enable == true && x.Id == examPeriodId);
             if (examPeriod == null)
                 throw new Exception("Không tìm thấy thông tin kỳ thi");
-            if(DateTime.Now >= examPeriod.EndTime)
+            if(DateTime.Now > examPeriod.EndTime)
                 throw new Exception("Kỳ thi đã kết thúc");
             string sql = $"Get_ExamDetail @PageIndex = 1," +
                 $"@PageSize = 9999," +
